@@ -1,389 +1,223 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle de Gastos 2026</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2c3e50">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    <link rel="icon" href="icon-192.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --primary: #2c3e50;
-            --danger: #e74c3c;
-            --success: #27ae60;
-            --warning: #f39c12;
-            --info: #3498db;
-            --bg: #f4f7f6;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Preparada? 💖</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💖</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blush: #FFE3EC;
+    --rose: #F7B6CB;
+    --ink: #3A0F2E;
+    --ink-soft: #7A4A68;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--blush);
+    color: var(--ink);
+    height: 100svh;
+    overflow: hidden;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tela {
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: calc(1.5rem + env(safe-area-inset-top, 0px)) 1.5rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  }
+  h1 {
+    font-size: clamp(3.5rem, 15vw, 11rem);
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    line-height: 0.9;
+  }
+  .actions {
+    margin-top: clamp(2rem, 6vh, 3.5rem);
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+  }
+  button {
+    font: 600 1.25rem/1 "Inter", system-ui, sans-serif;
+    padding: 1rem 2.4rem;
+    border-radius: 999px;
+    border: 2px solid var(--ink);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  button:focus-visible, a:focus-visible { outline: 3px solid var(--ink-soft); outline-offset: 4px; }
+  .coracao { font-size: .7em; letter-spacing: 0; display: inline-block; vertical-align: .08em; }
+  #sim { background: var(--ink); color: var(--blush); }
+  #sim:hover { transform: scale(1.04); }
+  #nao { background: transparent; color: var(--ink); }
+  #nao.solto {
+    position: fixed;
+    z-index: 10;
+    transition: left .28s cubic-bezier(.2,.8,.2,1), top .28s cubic-bezier(.2,.8,.2,1);
+  }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            padding: 20px;
-        }
+  /* ---------- Depois do "Sim" ---------- */
+  #final { display: none; }
+  body.aceito { height: auto; overflow-y: auto; background: var(--rose); transition: background .6s; }
+  body.aceito #pergunta { display: none; }
+  body.aceito #final { display: block; }
+  body.aceito .boas-vindas h1 { animation: surge .7s cubic-bezier(.2,.8,.2,1); }
 
-        .container { max-width: 1000px; margin: 0 auto; }
-        
-        .header-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
+  .boas-vindas { position: relative; }
+  .role {
+    position: absolute;
+    left: 50%;
+    bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+  }
+  .role svg { animation: quica 1.6s ease-in-out infinite; }
 
-        .month-tabs {
-            display: flex;
-            gap: 5px;
-            overflow-x: auto;
-            padding-bottom: 5px;
-        }
+  .video {
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    padding: 3rem 1.25rem calc(3rem + env(safe-area-inset-bottom, 0px));
+    background: var(--blush);
+  }
+  .moldura {
+    /* Proporção do vídeo: troque para 9 / 16 se ele foi gravado em pé */
+    --proporcao: 16 / 9;
+    width: min(100%, 960px, calc(85svh * (var(--proporcao))));
+    aspect-ratio: var(--proporcao);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 2px solid var(--ink);
+    background: var(--ink);
+  }
+  .moldura iframe { width: 100%; height: 100%; border: 0; display: block; }
 
-        .tab-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            background: #ddd;
-            cursor: pointer;
-            font-weight: 600;
-            white-space: nowrap;
-            transition: 0.3s;
-        }
-
-        .tab-btn.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-clear-month {
-            background-color: var(--danger);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 13px;
-        }
-
-        .balance-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-        }
-
-        .balance-item h4 { margin: 0; font-size: 13px; text-transform: uppercase; color: #7f8c8d; }
-        .balance-item p { margin: 5px 0 0; font-size: 24px; font-weight: 700; }
-        .total-pending { color: var(--danger); }
-        
-        .input-balance {
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 8px;
-            font-size: 18px;
-            font-weight: 700;
-            width: 100%;
-            max-width: 150px;
-            color: var(--primary);
-            margin-top: 5px;
-        }
-
-        .form-container {
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-
-        .form-group { display: flex; gap: 10px; flex-wrap: wrap; }
-        input, button { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 14px; }
-        input[type="text"] { flex: 2; }
-        
-        .btn-add { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: 600; padding: 0 30px; }
-
-        .table-container { background: #fff; border-radius: 12px; overflow-x: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        table { width: 100%; border-collapse: collapse; min-width: 800px; }
-        th { background: var(--primary); color: white; padding: 15px; text-align: left; font-size: 13px; }
-        td { padding: 15px; border-bottom: 1px solid #eee; font-size: 14px; }
-
-        .input-table-date {
-            border: 1px solid #eee;
-            padding: 5px;
-            border-radius: 4px;
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-        }
-
-        .status-badge { padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; }
-        .bg-pago { background: #e8f5e9; color: var(--success); }
-        .bg-apagar { background: #ffebee; color: var(--danger); }
-
-        .actions { display: flex; gap: 6px; }
-        .btn-action { border: none; border-radius: 6px; padding: 8px 10px; font-size: 10px; font-weight: 700; cursor: pointer; color: white; text-transform: uppercase; }
-        
-        .btn-pago { background-color: var(--success); }
-        .btn-apagar { background-color: #95a5a6; }
-        .btn-valor { background-color: var(--info); }
-        .btn-del { background-color: #333; }
-
-        tr.paid-row { background-color: #fcfcfc; opacity: 0.7; }
-        tr.paid-row td { text-decoration: line-through; text-decoration-color: #ccc; }
-        tr.paid-row .input-table-date { opacity: 0.5; pointer-events: none; }
-    </style>
+  @keyframes surge { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: none; } }
+  @keyframes quica { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    #nao.solto { transition: none; }
+    body.aceito .boas-vindas h1, .role svg { animation: none; }
+  }
+</style>
 </head>
 <body>
-
-<div class="container">
-    <div class="header-actions">
-        <div class="month-tabs" id="month-tabs"></div>
-        <button class="btn-clear-month" onclick="clearCurrentMonth()">Limpar Mês</button>
+<main id="pergunta" class="tela">
+  <section>
+    <h1>Preparada? <span class="coracao" aria-hidden="true">💖</span></h1>
+    <div class="actions">
+      <button id="sim" type="button">Sim</button>
+      <button id="nao" type="button">Não</button>
     </div>
+  </section>
+</main>
 
-    <div class="balance-container">
-        <div class="balance-item">
-            <h4 id="balance-label">Saldo Atual</h4>
-            <input type="number" id="current-balance" class="input-balance" placeholder="0.00" oninput="saveCurrentState()">
-        </div>
-        <div class="balance-item">
-            <h4>Total Pendente</h4>
-            <p id="total-value" class="total-pending">R$ 0,00</p>
-        </div>
-        <div class="balance-item">
-            <h4>Saldo Restante</h4>
-            <p id="remaining-balance">R$ 0,00</p>
-        </div>
-        <div class="balance-item" style="text-align: right;">
-            <h4>Pagas</h4>
-            <p id="paid-count" style="color: var(--success)">0</p>
-        </div>
-    </div>
+<div id="final">
+  <section class="tela boas-vindas" aria-live="polite">
+    <h1>Bem-vinda,<br>Lol</h1>
+    <a class="role" href="#video">
+      Role para baixo
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+    </a>
+  </section>
 
-    <div class="form-container">
-        <div class="form-group">
-            <input type="text" id="desc" placeholder="Nome da Dívida">
-            <input type="number" id="amount" placeholder="Valor R$">
-            <input type="date" id="date">
-            <button class="btn-add" onclick="addTransaction()">Adicionar</button>
-        </div>
+  <section id="video" class="video">
+    <div class="moldura">
+      <iframe id="player" title="Vídeo" allow="autoplay; fullscreen" allowfullscreen
+        data-src="https://drive.google.com/file/d/1NtvqhmDN0xrq9fLYgjuFe6DHwwy0HvaR/preview"></iframe>
     </div>
-
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Vencimento</th>
-                    <th>Dívida</th>
-                    <th>Valor</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="transaction-list"></tbody>
-        </table>
-    </div>
+  </section>
 </div>
 
 <script>
-    const months = ["Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-    let currentMonthIdx = 0;
-    let transactions = [];
+(() => {
+  const nao = document.getElementById('nao');
+  const sim = document.getElementById('sim');
+  const player = document.getElementById('player');
+  const MARGEM = 16;
+  const ALCANCE = 90;
+  const frases = ['Não', 'Tem certeza?', 'Pensa bem', 'Não adianta', 'Desiste', 'Sério?'];
+  let tentativas = 0;
 
-    const defaultTransactions = [
-        { id: 1, desc: "NUBANK", amount: 343.34, day: "10" },
-        { id: 2, desc: "TENDA", amount: 779.81, day: "15" },
-        { id: 3, desc: "CAIXA", amount: 378.23, day: "15" },
-        { id: 4, desc: "IPVA + LIC", amount: 226.67, day: "18" },
-        { id: 5, desc: "ALUGUEL", amount: 475.00, day: "20" },
-        { id: 6, desc: "INTERNET", amount: 40.00, day: "20" },
-        { id: 7, desc: "CLARO", amount: 39.27, day: "20" },
-        { id: 8, desc: "ITAU C.C", amount: 326.94, day: "23" },
-        { id: 9, desc: "ITAU C.C PAI", amount: 799.85, day: "23" },
-        { id: 10, desc: "ITAU C.C FABRICIO", amount: 135.00, day: "23" }
-    ];
+  const sobrepoe = (a, b, folga = 24) =>
+    !(a.right + folga < b.left || a.left - folga > b.right ||
+      a.bottom + folga < b.top || a.top - folga > b.bottom);
 
-    function getStorageKeys() {
-        const monthName = months[currentMonthIdx];
-        return {
-            data: `gastos_2026_${monthName}`,
-            balance: `saldo_2026_${monthName}`
-        };
+  function fugir(px, py) {
+    tentativas++;
+    nao.textContent = frases[Math.min(tentativas, frases.length - 1)];
+
+    if (!nao.classList.contains('solto')) {
+      const r = nao.getBoundingClientRect();
+      nao.style.left = r.left + 'px';
+      nao.style.top = r.top + 'px';
+      nao.classList.add('solto');
+      void nao.offsetWidth;
     }
 
-    function initTabs() {
-        const container = document.getElementById('month-tabs');
-        months.forEach((month, idx) => {
-            const btn = document.createElement('button');
-            btn.className = `tab-btn`;
-            btn.innerText = month;
-            btn.onclick = () => switchMonth(idx);
-            container.appendChild(btn);
-        });
+    const w = nao.offsetWidth, h = nao.offsetHeight;
+    const maxX = window.innerWidth - w - MARGEM;
+    const maxY = window.innerHeight - h - MARGEM;
+    const rSim = sim.getBoundingClientRect();
 
-        // Seleciona automaticamente o mês atual ao carregar
-        const now = new Date();
-        const currentMonthName = months[now.getMonth() - 4] || months[0]; // Ajuste para começar em Maio
-        const autoIdx = months.indexOf(currentMonthName);
-        switchMonth(autoIdx !== -1 ? autoIdx : 0);
+    let x, y, ok = false;
+    for (let i = 0; i < 40 && !ok; i++) {
+      x = MARGEM + Math.random() * Math.max(0, maxX - MARGEM);
+      y = MARGEM + Math.random() * Math.max(0, maxY - MARGEM);
+      const alvo = { left: x, top: y, right: x + w, bottom: y + h };
+      const longe = px == null || Math.hypot(x + w / 2 - px, y + h / 2 - py) > ALCANCE * 2;
+      ok = longe && !sobrepoe(alvo, rSim);
     }
+    nao.style.left = x + 'px';
+    nao.style.top = y + 'px';
+  }
 
-    function switchMonth(idx) {
-        currentMonthIdx = idx;
-        document.querySelectorAll('.tab-btn').forEach((btn, i) => {
-            btn.classList.toggle('active', i === idx);
-        });
-        document.getElementById('balance-label').innerText = `Saldo Atual (${months[idx]})`;
-        
-        const keys = getStorageKeys();
-        const savedBalance = localStorage.getItem(keys.balance);
-        document.getElementById('current-balance').value = savedBalance || '';
-        
-        loadTransactions();
-        updateUI();
-    }
+  function aoMover(e) {
+    if (e.pointerType !== 'mouse') return;
+    const r = nao.getBoundingClientRect();
+    const d = Math.hypot(r.left + r.width / 2 - e.clientX, r.top + r.height / 2 - e.clientY);
+    if (d < ALCANCE + r.width / 2) fugir(e.clientX, e.clientY);
+  }
+  document.addEventListener('pointermove', aoMover);
 
-    function loadTransactions() {
-        const keys = getStorageKeys();
-        const saved = localStorage.getItem(keys.data);
-        
-        if (saved && JSON.parse(saved).length > 0) {
-            transactions = JSON.parse(saved);
-        } else {
-            const year = "2026";
-            const monthNum = (currentMonthIdx + 5).toString().padStart(2, '0');
-            
-            transactions = defaultTransactions.map(t => ({
-                ...t,
-                id: Date.now() + Math.random(),
-                date: `${year}-${monthNum}-${t.day}`,
-                status: 'pendente'
-            }));
-            saveCurrentState();
-        }
-    }
+  nao.addEventListener('pointerdown', e => { e.preventDefault(); fugir(e.clientX, e.clientY); });
+  nao.addEventListener('touchstart', e => { e.preventDefault(); fugir(); }, { passive: false });
+  nao.addEventListener('click', e => { e.preventDefault(); fugir(); });
+  nao.addEventListener('focus', () => { nao.blur(); sim.focus(); fugir(); });
 
-    function clearCurrentMonth() {
-        if(confirm(`Deseja apagar todos os dados de ${months[currentMonthIdx]}?`)) {
-            const keys = getStorageKeys();
-            localStorage.removeItem(keys.data);
-            localStorage.removeItem(keys.balance);
-            switchMonth(currentMonthIdx); // Recarrega o mês com os padrões
-        }
-    }
+  window.addEventListener('resize', () => {
+    if (!nao.isConnected || !nao.classList.contains('solto')) return;
+    const maxX = window.innerWidth - nao.offsetWidth - MARGEM;
+    const maxY = window.innerHeight - nao.offsetHeight - MARGEM;
+    nao.style.left = Math.min(parseFloat(nao.style.left), maxX) + 'px';
+    nao.style.top = Math.min(parseFloat(nao.style.top), maxY) + 'px';
+  });
 
-    function saveCurrentState() {
-        const keys = getStorageKeys();
-        localStorage.setItem(keys.data, JSON.stringify(transactions));
-        localStorage.setItem(keys.balance, document.getElementById('current-balance').value);
-        updateUI();
-    }
-
-    function updateDate(id, newDate) {
-        const idx = transactions.findIndex(t => t.id === id);
-        transactions[idx].date = newDate;
-        transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
-        saveCurrentState();
-    }
-
-    function addTransaction() {
-        const desc = document.getElementById('desc').value;
-        const amount = parseFloat(document.getElementById('amount').value);
-        const date = document.getElementById('date').value;
-        if (!desc || isNaN(amount) || !date) return alert("Preencha tudo.");
-        
-        transactions.push({ id: Date.now(), desc, amount, date, status: 'pendente' });
-        transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
-        saveCurrentState();
-        document.getElementById('desc').value = '';
-        document.getElementById('amount').value = '';
-    }
-
-    function setStatus(id, status) {
-        const idx = transactions.findIndex(t => t.id === id);
-        transactions[idx].status = status;
-        saveCurrentState();
-    }
-
-    function deleteItem(id) {
-        if(confirm("Remover?")) {
-            transactions = transactions.filter(t => t.id !== id);
-            saveCurrentState();
-        }
-    }
-
-    function editValue(id) {
-        const t = transactions.find(x => x.id === id);
-        const newVal = prompt("Novo valor:", t.amount);
-        if (newVal !== null && !isNaN(parseFloat(newVal))) {
-            t.amount = parseFloat(newVal);
-            saveCurrentState();
-        }
-    }
-
-    function updateUI() {
-        const list = document.getElementById('transaction-list');
-        list.innerHTML = '';
-        let totalPendente = 0;
-        let pagoCount = 0;
-
-        transactions.forEach(t => {
-            const isPago = t.status === 'pago';
-            if (!isPago) totalPendente += t.amount; else pagoCount++;
-
-            const row = document.createElement('tr');
-            if(isPago) row.className = 'paid-row';
-
-            row.innerHTML = `
-                <td>
-                    <input type="date" class="input-table-date" value="${t.date}" 
-                           onchange="updateDate(${t.id}, this.value)">
-                </td>
-                <td>${t.desc}</td>
-                <td>R$ ${t.amount.toFixed(2).replace('.', ',')}</td>
-                <td><span class="status-badge ${isPago ? 'bg-pago' : 'bg-apagar'}">${isPago ? 'PAGO' : 'À PAGAR'}</span></td>
-                <td class="actions">
-                    <button class="btn-action ${isPago ? 'btn-apagar' : 'btn-pago'}" onclick="setStatus(${t.id}, '${isPago ? 'pendente' : 'pago'}')">
-                        ${isPago ? 'À PAGAR' : 'PAGO'}
-                    </button>
-                    <button class="btn-action btn-valor" onclick="editValue(${t.id})">VALOR</button>
-                    <button class="btn-action btn-del" onclick="deleteItem(${t.id})">X</button>
-                </td>
-            `;
-            list.appendChild(row);
-        });
-
-        const currentBalance = parseFloat(document.getElementById('current-balance').value) || 0;
-        const remaining = currentBalance - totalPendente;
-        
-        document.getElementById('total-value').innerText = `R$ ${totalPendente.toFixed(2).replace('.', ',')}`;
-        document.getElementById('paid-count').innerText = pagoCount;
-        
-        const remainingEl = document.getElementById('remaining-balance');
-        remainingEl.innerText = `R$ ${remaining.toFixed(2).replace('.', ',')}`;
-        remainingEl.style.color = remaining < 0 ? 'var(--danger)' : 'var(--success)';
-    }
-
-    initTabs();
-
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js').catch(() => {});
-        });
-    }
+  sim.addEventListener('click', () => {
+    document.removeEventListener('pointermove', aoMover);
+    nao.remove();
+    // O player do Drive começa a carregar já no "Sim", para estar pronto quando ela rolar
+    player.src = player.dataset.src;
+    document.body.classList.add('aceito');
+    window.scrollTo(0, 0);
+  });
+})();
 </script>
-
 </body>
 </html>
